@@ -1,0 +1,22 @@
+http:
+  routers:
+    whoami:
+      rule: "Host(`whoami.local`)"
+      service: whoami-service
+
+    cadvisor:
+      rule: "Host(`cadvisor.local`)"
+      service: cadvisor-service
+
+  services:
+    whoami-service:
+      loadBalancer:
+        servers:
+          - url: "http://whoami1:80"
+          - url: "http://whoami2:80"
+          - url: "http://whoami3:80"
+
+    cadvisor-service:
+      loadBalancer:
+        servers:
+          - url: "http://cadvisor:8080"

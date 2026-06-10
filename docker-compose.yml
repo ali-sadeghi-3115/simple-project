@@ -1,0 +1,63 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik.yml:/etc/traefik/dynamic.yml:ro
+    networks:
+      - web
+      - app
+    
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    networks:
+      - app
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /dev/disk:/dev/disk:ro
+  whoami1:
+    image: traefik/whoami:v1.11
+    container_name: whoami1
+    hostname: whoami1
+    restart: unless-stopped
+    networks:
+      - app
+
+  whoami2:
+    image: traefik/whoami:v1.11
+    container_name: whoami2
+    hostname: whoami2
+    restart: unless-stopped
+    networks:
+      - app
+
+  whoami3:
+    image: traefik/whoami:v1.11
+    container_name: whoami3
+    hostname: whoami3
+    restart: unless-stopped
+    networks:
+      - app
+
+networks:
+  web:
+    driver: bridge
+
+  app:
+    driver: bridge
+    internal: true
